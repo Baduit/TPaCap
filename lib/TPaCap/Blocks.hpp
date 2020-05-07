@@ -13,6 +13,7 @@ namespace TPaCap
 constexpr uint32_t MAGIC_NUMBER = 0x1A2B3C4D;
 constexpr uint32_t REVERSED_MAGIC_NUMBER = 0x4D3C2B1A;
 
+constexpr std::size_t MINIMUM_BLOCK_SIZE = sizeof(uint32_t) * 3;
 
 namespace Block
 {
@@ -77,7 +78,7 @@ struct InterfaceStatistics
 struct SystemdJournalExport
 {
 	static constexpr uint32_t code = 0x00000009;
-	std::byte* journal_entry; // Better type later
+	std::vector<std::byte> journal_entry;
 };
 
 struct DecryptionSecrets
