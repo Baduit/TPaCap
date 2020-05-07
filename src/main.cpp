@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <fstream>
 
-#include <aggreget/aggreget.hpp>
 #include <TPaCap/TPaCap.hpp>
 
 namespace fs = std::filesystem;

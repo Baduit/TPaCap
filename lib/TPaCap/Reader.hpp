@@ -22,6 +22,8 @@ struct NonOwningBuffer
 class Reader
 {
 	public:
+		bool need_swaping_endianess = false;
+
 		template<typename T> // replace typename by integral concept?
 		T	read(std::byte*& buffer, std::size_t& buffer_size)
 		{
@@ -41,8 +43,19 @@ class Reader
 			buffer_size -= nb_byte;
 			return result_buffer;
 		}
-	
-		bool need_swaping_endianess = false;
+
+		template<std::size_t drop_size>
+		void drop(std::byte*& buffer, std::size_t& buffer_size)
+		{
+			buffer += drop_size;
+			buffer_size -= drop_size;
+		}
+
+		void drop(std::byte*& buffer, std::size_t& buffer_size, std::size_t drop_size)
+		{
+			buffer += drop_size;
+			buffer_size -= drop_size;
+		}
 };
 
 } // namespace TPaCap

@@ -85,6 +85,7 @@ class Factory
 			SectionHeader block{};
 
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
+			auto old_buffer_size = buffer.size;
 
 			block.magic_number = reader.read<uint32_t>(buffer.data, buffer.size);
 			if (block.magic_number == REVERSED_MAGIC_NUMBER)
@@ -101,8 +102,10 @@ class Factory
 			block.minor_version = reader.read<uint16_t>(buffer.data, buffer.size);
 			block.section_length = reader.read<int64_t>(buffer.data, buffer.size);
 
-			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - sizeof(uint32_t) - sizeof(uint16_t) * 2 - sizeof(int64_t));
+			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
 			read_block_size_at_the_end(buffer, reader, block_size);
+
+			_next_interface_description_id = 0;
 
 			return block;
 		}
@@ -112,9 +115,16 @@ class Factory
 			InterfaceDescription block{};
 
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.link_type = reader.read<uint16_t>(buffer.data, buffer.size);
+			reader.drop<sizeof(uint16_t)>(buffer.data, buffer.size);
+			block.max_packet_lenght = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
 			read_block_size_at_the_end(buffer, reader, block_size);
+
+			block.id = _next_interface_description_id++;
 
 			return block;
 		}
@@ -202,6 +212,9 @@ class Factory
 
 			return block;
 		}
+
+	private:
+		unsigned int _next_interface_description_id = 0;
 };
 
 } // namespace Block
