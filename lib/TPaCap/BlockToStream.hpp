@@ -13,7 +13,7 @@ namespace Block
 inline std::ostream& operator<<(std::ostream& os, const SectionHeader& b)
 {
 	os
-		<< "[" << "SectionHeader" << "]"
+		<< "[" << "SectionHeader" << "]\n"
 		<< "{\n"
 		<< "\t" << "magic_number: " << b.magic_number << "\n"
 		<< "\t" << "major_version: " << b.major_version << "\n"
@@ -26,7 +26,7 @@ inline std::ostream& operator<<(std::ostream& os, const SectionHeader& b)
 inline std::ostream& operator<<(std::ostream& os, const InterfaceDescription& b)
 {
 	os
-		<< "[" << "InterfaceDescription" << "]"
+		<< "[" << "InterfaceDescription" << "]\n"
 		<< "{\n"
 		<< "\t" << "link_type: " << b.link_type << "\n"
 		<< "\t" << "max_packet_lenght: " << b.max_packet_lenght << "\n"
@@ -38,7 +38,7 @@ inline std::ostream& operator<<(std::ostream& os, const InterfaceDescription& b)
 inline std::ostream& operator<<(std::ostream& os, const EnhancedPacket& b)
 {
 	os
-		<< "[" << "EnhancedPacket" << "]"
+		<< "[" << "EnhancedPacket" << "]\n"
 		<< "{\n"
 		<< "\t" << "interface_id: " << b.interface_id << "\n"
 		<< "\t" << "timestamp: " << b.timestamp << "\n"
@@ -51,7 +51,7 @@ inline std::ostream& operator<<(std::ostream& os, const EnhancedPacket& b)
 inline std::ostream& operator<<(std::ostream& os, const SimplePacket& b)
 {
 	os
-		<< "[" << "SimplePacket" << "]"
+		<< "[" << "SimplePacket" << "]\n"
 		<< "{\n"
 		<< "\t" << "original_packet_length: " << b.original_packet_length << "\n"
 		<< "\t" << "data.size: " << b.data.size() << "\n"
@@ -62,7 +62,7 @@ inline std::ostream& operator<<(std::ostream& os, const SimplePacket& b)
 inline std::ostream& operator<<(std::ostream& os, const NameResolution& b)
 {
 	os
-		<< "[" << "NameResolution" << "]"
+		<< "[" << "NameResolution" << "]\n"
 		<< "{\n"
 		<< "}" << std::endl;
 	return os;
@@ -71,7 +71,7 @@ inline std::ostream& operator<<(std::ostream& os, const NameResolution& b)
 inline std::ostream& operator<<(std::ostream& os, const InterfaceStatistics& b)
 {
 	os
-		<< "[" << "InterfaceStatistics" << "]"
+		<< "[" << "InterfaceStatistics" << "]\n"
 		<< "{\n"
 		<< "\t" << "interface_id: " << b.interface_id << "\n"
 		<< "\t" << "timestamp: " << b.timestamp << "\n"
@@ -82,7 +82,7 @@ inline std::ostream& operator<<(std::ostream& os, const InterfaceStatistics& b)
 inline std::ostream& operator<<(std::ostream& os, const SystemdJournalExport& b)
 {
 	os
-		<< "[" << "SystemdJournalExport" << "]"
+		<< "[" << "SystemdJournalExport" << "]\n"
 		<< "{\n"
 		<< "\t" << "journal_entry.size: " << b.journal_entry.size() << "\n"
 		<< "}" << std::endl;
@@ -92,7 +92,7 @@ inline std::ostream& operator<<(std::ostream& os, const SystemdJournalExport& b)
 inline std::ostream& operator<<(std::ostream& os, const DecryptionSecrets& b)
 {
 	os
-		<< "[" << "DecryptionSecrets" << "]"
+		<< "[" << "DecryptionSecrets" << "]\n"
 		<< "{\n"
 		<< "\t" << "secret_type: " << b.secret_type << "\n"
 		<< "\t" << "secret.size: " << b.secret.size() << "\n"
@@ -103,7 +103,7 @@ inline std::ostream& operator<<(std::ostream& os, const DecryptionSecrets& b)
 inline std::ostream& operator<<(std::ostream& os, const Custom& b)
 {
 	os
-		<< "[" << "Custom" << "]"
+		<< "[" << "Custom" << "]\n"
 		<< "{\n"
 		<< "\t" << "private_enterprise_number: " << b.private_enterprise_number << "\n"
 		<< "\t" << "custom_data.size: " << b.custom_data.size() << "\n"
