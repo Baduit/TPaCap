@@ -73,7 +73,7 @@ class Factory
 			reader.read(buffer.data, buffer.size, options_length);
 		}
 
-		void read_block_size_at_the_end(NonOwningBuffer& buffer, Reader& reader, std::size_t block_size_at_the_beginning)
+		constexpr void read_block_size_at_the_end(NonOwningBuffer& buffer, Reader& reader, std::size_t block_size_at_the_beginning)
 		{
 			auto block_size_at_the_end = reader.read<uint32_t>(buffer.data, buffer.size);
 			if (block_size_at_the_beginning != block_size_at_the_end)
@@ -134,8 +134,20 @@ class Factory
 			EnhancedPacket block{};
 
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.interface_id = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			uint64_t high_ts = reader.read<uint32_t>(buffer.data, buffer.size);
+			uint64_t low_ts = reader.read<uint32_t>(buffer.data, buffer.size);
+			block.timestamp = (high_ts << 32) | low_ts;
+
+			block.original_packet_length = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			auto captured_packet_length = reader.read<uint32_t>(buffer.data, buffer.size);
+			block.data = reader.read(buffer.data, buffer.size, captured_packet_length);
+
+			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
@@ -146,8 +158,11 @@ class Factory
 			SimplePacket block{};
 
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.original_packet_length = reader.read<uint32_t>(buffer.data, buffer.size);
+			block.data = reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
+
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
