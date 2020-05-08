@@ -25,7 +25,7 @@ class Reader
 		bool need_swaping_endianess = false;
 
 		template<typename T> // replace typename by integral concept?
-		T	read(std::byte*& buffer, std::size_t& buffer_size)
+		constexpr T	read(std::byte*& buffer, std::size_t& buffer_size)
 		{
 			T value{};
 			std::memcpy(&value, buffer, sizeof(T));
@@ -45,7 +45,7 @@ class Reader
 		}
 
 		template<std::size_t drop_size>
-		void drop(std::byte*& buffer, std::size_t& buffer_size)
+		constexpr void drop(std::byte*& buffer, std::size_t& buffer_size)
 		{
 			buffer += drop_size;
 			buffer_size -= drop_size;
