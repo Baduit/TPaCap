@@ -185,8 +185,15 @@ class Factory
 			InterfaceStatistics block{};
 			
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.interface_id = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			uint64_t high_ts = reader.read<uint32_t>(buffer.data, buffer.size);
+			uint64_t low_ts = reader.read<uint32_t>(buffer.data, buffer.size);
+			block.timestamp = (high_ts << 32) | low_ts; 
+
+			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
@@ -197,8 +204,9 @@ class Factory
 			SystemdJournalExport block{};
 			
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+
+			block.journal_entry = reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
@@ -209,8 +217,15 @@ class Factory
 			DecryptionSecrets block{};
 			
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.secret_type = reader.read<uint32_t>(buffer.data, buffer.size);
+
+
+			auto secret_size = reader.read<uint32_t>(buffer.data, buffer.size);
+			block.secret = reader.read(buffer.data, buffer.size, secret_size);
+
+			read_options(block, buffer, reader, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
@@ -221,8 +236,13 @@ class Factory
 			Custom block{};
 			
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
-			// Todo: this is temporary
-			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
+			auto old_buffer_size = buffer.size;
+
+			block.private_enterprise_number = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			// Option datas are for now in the custom data because it is not possible to know where it begins...
+			block.custom_data = reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE - (old_buffer_size - buffer.size));
+
 			read_block_size_at_the_end(buffer, reader, block_size);
 
 			return block;
