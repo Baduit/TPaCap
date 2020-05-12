@@ -36,9 +36,11 @@ class Reader
 			return value;
 		}
 
-		std::vector<std::byte> read(std::byte*& buffer, std::size_t& buffer_size, std::size_t nb_byte)
+		template <typename OutputContainer = std::vector<std::byte>> // TODO conceptify it as contiguous range
+		OutputContainer read(std::byte*& buffer, std::size_t& buffer_size, std::size_t nb_byte)
 		{
-			std::vector<std::byte> result_buffer(buffer, buffer + nb_byte);
+			using DataPtr = decltype(std::declval<OutputContainer>().data());
+			OutputContainer result_buffer(reinterpret_cast<DataPtr>(buffer), reinterpret_cast<DataPtr>(buffer) + nb_byte);
 			buffer += nb_byte;
 			buffer_size -= nb_byte;
 			return result_buffer;
