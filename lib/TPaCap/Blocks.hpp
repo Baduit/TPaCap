@@ -6,6 +6,7 @@
 #include <cstddef>
 
 #include "Option.hpp"
+#include "IpAddr.hpp"
 
 namespace TPaCap
 {
@@ -57,10 +58,24 @@ struct SimplePacket
 
 struct NameResolution
 {
-	struct Record
+	struct IPV4Record
 	{
-
+		static constexpr uint16_t code = 0x0001;
+		IpAddr::IpV4 ip_addr;
 	};
+
+	struct IPV6Record
+	{
+		static constexpr uint16_t code = 0x0002;
+		IpAddr::IpV6 ip_addr;
+	};
+
+	struct EndRecord
+	{
+		static constexpr uint16_t code = 0x0000;
+	};
+
+	using Record = std::variant<EndRecord, IPV4Record, IPV6Record>;
 
 	static constexpr uint32_t code = 0x00000004;
 	std::vector<Record> records;
