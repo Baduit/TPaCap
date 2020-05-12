@@ -6,6 +6,7 @@
 #include "Blocks.hpp"
 #include "Reader.hpp"
 #include "BlockToStream.hpp"
+#include "NumberTypes.hpp"
 
 namespace TPaCap
 {
@@ -78,6 +79,12 @@ class Factory
 			auto block_size_at_the_end = reader.read<uint32_t>(buffer.data, buffer.size);
 			if (block_size_at_the_beginning != block_size_at_the_end)
 				throw std::runtime_error("Mismatch block size");
+		}
+
+		template <typename T> // TODO: use integral concept
+		constexpr T pad_value(T value, T padding_size)
+		{
+			return value + (padding_size - value % padding_size);
 		}
 
 		SectionHeader create_section_header(NonOwningBuffer& buffer, Reader& reader)
@@ -173,6 +180,22 @@ class Factory
 			NameResolution block{};
 
 			auto block_size = reader.read<uint32_t>(buffer.data, buffer.size);
+
+			while (true)
+			{
+				auto record_code = reader.read<uint16_t>(buffer.data, buffer.size);
+				auto record_size = reader.read<uint16_t>(buffer.data, buffer.size);
+				if (record_code == NameResolution::EndRecord::code)
+					break;
+				if (record_code == NameResolution::IPV4Record::code)
+					block.records.push_back(NameResolution::IPV4Record{reader.read<std::string>(buffer.data, buffer.size, pad_value(record_size, 32_u16))}); // TODO: create a padding method
+				else if (record_code == NameResolution::IPV6Record::code)
+					block.records.push_back(NameResolution::IPV6Record{reader.read<std::string>(buffer.data, buffer.size, pad_value(record_size, 32_u16))}); // TODO: create a padding method
+				else
+					throw std::runtime_error("Unknown record code.");
+			}
+			
+				
 			// Todo: this is temporary
 			reader.read(buffer.data, buffer.size, block_size - MINIMUM_BLOCK_SIZE);
 			read_block_size_at_the_end(buffer, reader, block_size);
